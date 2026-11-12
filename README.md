@@ -16,11 +16,12 @@ Aplicativo em português para cadastrar contas, acompanhar receitas e despesas e
 
 ## Executar localmente
 
-Requisito: **Node.js 22.13 ou superior**, com suporte ao módulo `node:sqlite`. Não há dependências externas para instalar.
+Requisito: **Node.js 22.13 ou superior**, com suporte ao módulo `node:sqlite`. A versão da Vercel utiliza `@vercel/blob`. Instale as dependências com `npm install` antes de executar.
 
 ```sh
 git clone https://github.com/coimbracaua/AppControleFinanceiro.git
 cd AppControleFinanceiro
+npm install
 npm run dev
 ```
 
@@ -76,13 +77,30 @@ node --check dist/server/index.js
 
 Os testes cobrem operações financeiras válidas, proteção das reservas, limites de resgate, valores e referências inválidos, datas inválidas, identidade, origem e concorrência.
 
-## Hospedagem
+## Hospedagem na Vercel
 
-O alvo de produção é um **Cloudflare Worker com banco D1**, usando o fluxo de publicação do **Sites**. O build gera `dist/server/index.js`. A migração SQL deve ser aplicada ao D1 e o banco deve ser disponibilizado no binding `DB` antes de usar o app.
+A versão online usa Functions Node.js 24 e **Vercel Blob privado** para os documentos de credenciais e registros financeiros. O SDK fica exclusivamente no servidor; nenhuma credencial de armazenamento é enviada ao navegador. O projeto precisa estar conectado a um store privado com a variável `BLOB_READ_WRITE_TOKEN` ou `BLOB_STORE_ID` com OIDC.
 
-A produção depende do gateway de autenticação do Sites: ele autentica visitantes e injeta `oai-authenticated-user-id`. Não exponha o Worker diretamente aceitando esse cabeçalho de clientes sem um gateway confiável. Para outro provedor, implemente autenticação de servidor adequada e adapte a integração de banco. Não há integração de login independente neste projeto.
+- `npm run build:vercel` gera `public/index.html`.
+- `vercel.json` define o build, diretório estático, Functions e cabeçalhos de segurança.
+- `api/auth.js` oferece configuração inicial, login e logout.
+- `api/state.js` usa sessão autenticada e validação financeira.
+- `lib/vercel-core.js` contém autenticação e regras da API.
+- `lib/vercel-storage.js` acessa o armazenamento privado com ETag e gravações condicionais.
 
-**Estado atual:** código implementado e testes locais disponíveis. A publicação do Site não foi concluída. Este repositório contém o código; não representa um app já hospedado. A configuração de publicação e as migrações ainda precisam ser verificadas na plataforma de destino. A interface ainda não passou por testes de navegador neste ambiente.
+O primeiro acesso em **https://appfinanceiro-coimbracaua.vercel.app** permite criar a senha pessoal (12 a 128 caracteres). **Mantenha a proteção de implantação da Vercel ativada**, especialmente até essa configuração inicial. A criação da senha só é aceita pelo hostname principal definido no servidor e o documento inicial não pode ser sobrescrito. Depois disso, é exigida uma sessão válida, inclusive em outras URLs da implantação.
+
+A senha é derivada com scrypt e salt aleatório. O cookie de sessão usa HMAC, validade de 7 dias, `HttpOnly`, `Secure` e `SameSite=Strict`. A versão online é um espaço financeiro pessoal único: pessoas às quais você conceder a senha compartilham os mesmos dados. Não há recuperação automática de senha ou cadastro de múltiplos usuários. A proteção da Vercel pode exigir também sua conta Vercel antes do login do app.
+
+O armazenamento contém `auth/owner.json` e `finance/owner.json`, ambos privados. As revisões e os ETags impedem sobrescritas concorrentes. Não altere a visibilidade do store para público. O SQLite local e o banco D1 do Sites são ambientes separados; para mover registros use exportar/restaurar backup.
+
+### Alvo original do Sites
+
+O build `npm run build` e o código `worker/index.js` continuam disponíveis para o alvo original Cloudflare Worker + D1, com autenticação fornecida pelo gateway Sites. A migração está em `drizzle/0000_finances.sql`. A publicação no Sites não foi concluída; a implantação atual tem como alvo a Vercel.
+
+### Verificação
+
+`npm test` verifica cálculos financeiros e a API, incluindo configuração de senha, login, sessão, logout, origem e concorrência. Build e sintaxe foram verificados localmente. Testes completos de interação em navegador ainda não foram realizados neste ambiente.
 
 ## Escopo atual
 

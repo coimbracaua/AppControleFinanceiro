@@ -6,3 +6,5 @@ outputs/
 .env.*
 !.env.example
 .dev.vars*
+public/
+.vercel/
