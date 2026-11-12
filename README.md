@@ -104,13 +104,17 @@ O build `npm run build` e o código `worker/index.js` continuam disponíveis par
 
 ## Instalar no celular ou computador (PWA)
 
-A versão hospedada na Vercel possui manifest, ícones próprios e service worker. Use **Instalar o Bolso** no menu do app para ver instruções do seu dispositivo. Em navegadores compatíveis, o botão **Instalar agora** abre a confirmação nativa.
+A versão hospedada na Vercel possui manifest, ícones próprios e service worker. Use **https://appfinanceiro-rust-six.vercel.app/** para instalar. O endereço de equipe `appfinanceiro-coimbracaua.vercel.app` pode exigir a autenticação extra da Vercel, impedindo o serviço de instalação do Android de baixar arquivos. O botão **Instalar o Bolso** direciona ao domínio de produção e mostra instruções do dispositivo. Em navegadores compatíveis, o botão **Instalar agora** abre a confirmação nativa.
 
-- **Android / Chrome:** menu ⋮ → Instalar app ou Adicionar à tela inicial.
+- **Android / Chrome:** menu ⋮ → Instalar app ou Adicionar à tela inicial. Depois procure Bolso na lista de aplicativos; para colocá-lo na tela inicial, segure o ícone e arraste.
 - **iPhone / iPad / Safari:** Compartilhar → Adicionar à Tela de Início → Adicionar. Ative Abrir como App se disponível.
 - **Computador / Chrome ou Edge:** ícone de instalação na barra de endereços ou opção de instalar no menu do navegador.
 
-O app abre em janela própria, com ícone na tela inicial. Precisa ser acessado por HTTPS, com login na Vercel quando solicitado. Abra no navegador completo, em vez do navegador interno de um mensageiro. A disponibilidade do convite automático depende do navegador, dispositivo e de o app já estar instalado.
+O app abre em janela própria, com ícone na lista de aplicativos. A inclusão automática na tela inicial depende do launcher do Android. Precisa ser acessado por HTTPS, com login na Vercel quando solicitado. Abra no navegador completo, em vez do navegador interno de um mensageiro. A disponibilidade do convite automático depende do navegador, dispositivo e de o app já estar instalado.
+
+A confirmação do diálogo nativo e o evento `appinstalled` não garantem que o Android terminou de criar o pacote. A interface informa que a solicitação foi recebida e mantém disponíveis as instruções para encontrar o ícone ou refazer uma tentativa pendente.
+
+O endpoint de diagnóstico `GET /api/install-status` verifica o acesso sem cookies ao manifest, ícone, service worker e página inicial dos dois endereços fixos do projeto. Ele não consulta registros financeiros e não aceita URLs arbitrárias.
 
 **Sem conexão:** o app mostra uma tela para reconectar. O cache contém somente os arquivos estáticos de instalação e o aviso offline. Saldos, credenciais, respostas da API e páginas autenticadas não são armazenados pelo service worker. Consultar ou gravar lançamentos exige internet; não existe fila de sincronização offline.
 
