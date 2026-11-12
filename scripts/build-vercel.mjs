@@ -1,3 +1,4 @@
+import {buildPwa} from './build-pwa.mjs';
 import {mkdir,readFile,writeFile} from 'node:fs/promises';
 await mkdir('public',{recursive:true});
 let html=await readFile('app.html','utf8');
@@ -14,5 +15,6 @@ const old="$('#status').innerHTML='Seu espaço está pronto. <a href=\"/signin-w
 html=html.replace(old,'await showLogin();return');
 html=html.replace('href="/signout-with-chatgpt?return_to=/"','href="#" id="logout"');
 html=html.replace("const b=e.target.closest('button');",`if(e.target.closest('#logout')){e.preventDefault();fetch('/api/auth',{method:'DELETE'}).then(()=>location.reload());return}const b=e.target.closest('button');`);
+html=await buildPwa('public',html);
 await writeFile('public/index.html',html);
 console.log('Vercel: interface gerada em public/index.html.');
