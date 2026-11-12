@@ -1,0 +1,14 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import worker,{validate} from '../worker/index.js';
+const base=()=>({accounts:[{id:'a',name:'Conta',initial:10000}],goals:[{id:'g',name:'Viagem',target:20000}],transactions:[]});
+const tx=(type,amount,extra={})=>({id:crypto.randomUUID(),description:'Teste',category:'Outros',date:'2026-11-12',account:'a',goal:'g',type,amount,...extra});
+test('receita, despesa, aporte e resgate válidos',()=>{const s=base();s.transactions=[tx('reserve',5000),tx('withdraw',1000),tx('expense',6000),tx('income',2000)];assert.equal(validate(s),s)});
+test('despesa não pode consumir reserva',()=>{const s=base();s.transactions=[tx('reserve',5000),tx('expense',6000)];assert.throws(()=>validate(s),/insuficiente/)});
+test('resgate deve respeitar conta e objetivo',()=>{const s=base();s.transactions=[tx('reserve',1000),tx('withdraw',2000)];assert.throws(()=>validate(s),/resgate/)});
+test('não aceita centavos fracionários, negativos ou data inválida',()=>{for(const t of [tx('income',1.5),tx('expense',-1),tx('income',1,{date:'2026-02-30'})]){const s=base();s.transactions=[t];assert.throws(()=>validate(s))}});
+test('não aceita referências inexistentes',()=>{const s=base();s.transactions=[tx('reserve',10,{goal:'outro'})];assert.throws(()=>validate(s),/Objetivo/)});
+test('identidade exigida na API',async()=>{const r=await worker.fetch(new Request('https://test/api/state'),{});assert.equal(r.status,401)});
+test('GET consulta somente o usuário autenticado',async()=>{let bound;const env={DB:{prepare(){return {bind(u){bound=u;return{first:async()=>null}}}}}};const r=await worker.fetch(new Request('https://test/api/state',{headers:{'oai-authenticated-user-id':'u1'}}),env);assert.equal(bound,'u1');assert.equal((await r.json()).revision,0)});
+test('rejeita gravação de outra origem',async()=>{const r=await worker.fetch(new Request('https://test/api/state',{method:'PUT',headers:{'oai-authenticated-user-id':'u1',origin:'https://evil'}}),{});assert.equal(r.status,403)});
+test('edição concorrente não sobrescreve dados',async()=>{const env={DB:{prepare(){return{bind(){return{run:async()=>({meta:{changes:0}})}}}}}};const r=await worker.fetch(new Request('https://test/api/state',{method:'PUT',headers:{'oai-authenticated-user-id':'u1',origin:'https://test'},body:JSON.stringify({data:base(),revision:1})}),env);assert.equal(r.status,409)});

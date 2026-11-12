@@ -1,0 +1,13 @@
+{
+  "name": "bolso-financeiro",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "node --test scripts/check.test.mjs",
+    "dev": "npm run build && node scripts/dev.mjs"
+  },
+  "engines": {
+    "node": ">=22.13.0"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "project_id": "appgprj_6af5a46a98348191b91d602759c81477",
+  "d1": {
+    "binding": "DB",
+    "migrations_dir": "drizzle"
+  },
+  "r2": null
+}

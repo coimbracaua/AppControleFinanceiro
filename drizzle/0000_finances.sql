@@ -1,0 +1,1 @@
+CREATE TABLE finance_state (user_id TEXT PRIMARY KEY NOT NULL, data TEXT NOT NULL, revision INTEGER NOT NULL DEFAULT 1);
