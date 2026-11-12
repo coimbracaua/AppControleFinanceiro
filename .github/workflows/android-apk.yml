@@ -41,8 +41,8 @@ jobs:
           cp "$ANDROID_HOME/build-tools/36.0.0/lib/apksigner.jar" apk-output/apksigner.jar
           cp "$ANDROID_HOME/build-tools/36.0.0/NOTICE.txt" apk-output/ANDROID-NOTICE.txt
           "$ANDROID_HOME/build-tools/36.0.0/aapt" dump badging apk-output/bolso-unsigned.apk > apk-output/package-info.txt
-          rg "package: name='br.com.coimbracaua.bolso'" apk-output/package-info.txt
-          rg 'launchable-activity:' apk-output/package-info.txt
+          grep "package: name='br.com.coimbracaua.bolso'" apk-output/package-info.txt
+          grep 'launchable-activity:' apk-output/package-info.txt
           "$ANDROID_HOME/build-tools/36.0.0/zipalign" -c -P 16 4 apk-output/bolso-unsigned.apk
           sha256sum apk-output/bolso-unsigned.apk > apk-output/unsigned.sha256
       - name: Enable hardware virtualization
@@ -58,7 +58,7 @@ jobs:
             adb install android/app/build/outputs/apk/debug/app-debug.apk
             adb shell pm path br.com.coimbracaua.bolso
             adb shell cmd package resolve-activity --brief -a android.intent.action.MAIN -c android.intent.category.LAUNCHER br.com.coimbracaua.bolso | tee apk-output/launcher-test.txt
-            rg 'br.com.coimbracaua.bolso/' apk-output/launcher-test.txt
+            grep 'br.com.coimbracaua.bolso/' apk-output/launcher-test.txt
       - name: Upload unsigned APK and public build tools
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
