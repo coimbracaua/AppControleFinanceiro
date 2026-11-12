@@ -28,6 +28,8 @@ A assinatura de release é feita fora do GitHub Actions. A chave privada e a sen
 
 A declaração de Digital Asset Links é publicada em `/.well-known/assetlinks.json`, associando o domínio ao pacote e ao certificado público do APK. O build da Vercel copia a declaração automaticamente.
 
+Depois de baixar e extrair o artefato de build, execute `python scripts/sign-android.py /caminho/do/artefato` no ambiente privado que mantém a chave. O script assina, verifica o certificado, gera o SHA-256 e cria um backup privado em `outputs/bolso-signing-backup-PRIVATE.zip`. Esse backup contém a chave e a senha: nunca publique no GitHub ou na hospedagem.
+
 O arquivo final para distribuição deve ser assinado com a chave de release, verificado com `apksigner verify --verbose --print-certs` e acompanhado do SHA-256. Guarde uma cópia privada da chave e das credenciais para assinar futuras atualizações com a mesma identidade.
 
 ## Instalar
