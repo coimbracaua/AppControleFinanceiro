@@ -127,3 +127,7 @@ Os arquivos-fonte estão em `pwa/`; `scripts/build-pwa.mjs` gera os ícones PNG 
 Cadastro financeiro manual. Não inclui conexão automática com bancos, Open Finance, cartões com fechamento de fatura, recorrências automáticas ou importação de extratos bancários.
 
 Nenhuma credencial, dado financeiro real ou banco de desenvolvimento deve ser enviado ao repositório.
+
+## APK Android
+
+O projeto Android está em `android/`. Ele utiliza TWA para abrir o app com ícone e identidade Android próprios. O workflow Android APK compila e testa a instalação em emulador. A versão de release é assinada fora do repositório; veja [android/README.md](android/README.md).

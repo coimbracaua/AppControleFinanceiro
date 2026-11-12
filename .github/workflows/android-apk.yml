@@ -1,0 +1,65 @@
+name: Android APK
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'android/**'
+      - 'scripts/android-assets.mjs'
+      - '.github/workflows/android-apk.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@ed408507eac070d1f99cc633dbcf757c94c7933a
+        with:
+          gradle-version: '8.13'
+      - name: Prepare Android SDK and icons
+        run: |
+          sdkmanager 'platforms;android-36' 'build-tools;36.0.0'
+          node scripts/build-vercel.mjs
+          node scripts/android-assets.mjs
+      - name: Build release and emulator package
+        run: gradle -p android :app:assembleRelease :app:assembleDebug --no-daemon --stacktrace
+      - name: Validate package and prepare signing tools
+        run: |
+          mkdir -p apk-output
+          cp android/app/build/outputs/apk/release/app-release-unsigned.apk apk-output/bolso-unsigned.apk
+          cp "$ANDROID_HOME/build-tools/36.0.0/lib/apksigner.jar" apk-output/apksigner.jar
+          cp "$ANDROID_HOME/build-tools/36.0.0/NOTICE.txt" apk-output/ANDROID-NOTICE.txt
+          "$ANDROID_HOME/build-tools/36.0.0/aapt" dump badging apk-output/bolso-unsigned.apk > apk-output/package-info.txt
+          rg "package: name='br.com.coimbracaua.bolso'" apk-output/package-info.txt
+          rg 'launchable-activity:' apk-output/package-info.txt
+          "$ANDROID_HOME/build-tools/36.0.0/zipalign" -c -P 16 4 apk-output/bolso-unsigned.apk
+          sha256sum apk-output/bolso-unsigned.apk > apk-output/unsigned.sha256
+      - name: Enable hardware virtualization
+        run: sudo chmod 666 /dev/kvm
+      - name: Verify installation and launcher on Android emulator
+        uses: ReactiveCircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d
+        with:
+          api-level: 30
+          arch: x86_64
+          target: google_apis
+          disable-animations: true
+          script: |
+            adb install android/app/build/outputs/apk/debug/app-debug.apk
+            adb shell pm path br.com.coimbracaua.bolso
+            adb shell cmd package resolve-activity --brief -a android.intent.action.MAIN -c android.intent.category.LAUNCHER br.com.coimbracaua.bolso | tee apk-output/launcher-test.txt
+            rg 'br.com.coimbracaua.bolso/' apk-output/launcher-test.txt
+      - name: Upload unsigned APK and public build tools
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: bolso-android-unsigned
+          path: apk-output/
+          if-no-files-found: error
+          retention-days: 30

@@ -1,0 +1,14 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "br.com.coimbracaua.bolso",
+      "sha256_cert_fingerprints": [
+        "AD:0D:50:D4:32:9C:3E:8D:3E:D8:F7:6D:67:DF:F7:3F:EB:7D:26:F6:C4:6C:F6:24:D1:2D:37:48:3E:48:CF:F4"
+      ]
+    }
+  }
+]

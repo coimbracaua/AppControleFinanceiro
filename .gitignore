@@ -8,3 +8,11 @@ outputs/
 .dev.vars*
 public/
 .vercel/
+.android-signing/
+*.keystore
+*.p12
+*.jks
+android/.gradle/
+android/**/build/
+android/local.properties
+android/app/src/main/res/mipmap-nodpi/ic_launcher.png

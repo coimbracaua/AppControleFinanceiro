@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Bolso</string>
+    <color name="bolso_green">#193e36</color>
+    <string name="asset_statements">[{\"relation\":[\"delegate_permission/common.handle_all_urls\"],\"target\":{\"namespace\":\"web\",\"site\":\"https://appfinanceiro-rust-six.vercel.app\"}}]</string>
+</resources>

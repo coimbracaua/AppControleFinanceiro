@@ -1,5 +1,5 @@
 import {buildPwa} from './build-pwa.mjs';
-import {mkdir,readFile,writeFile} from 'node:fs/promises';
+import {mkdir,readFile,writeFile,copyFile} from 'node:fs/promises';
 await mkdir('public',{recursive:true});
 let html=await readFile('app.html','utf8');
 html=html.replace('const $=s=>',"const VERCEL_APP=true; const $=s=>");
@@ -18,3 +18,6 @@ html=html.replace("const b=e.target.closest('button');",`if(e.target.closest('#l
 html=await buildPwa('public',html);
 await writeFile('public/index.html',html);
 console.log('Vercel: interface gerada em public/index.html.');
+
+await mkdir('public/.well-known',{recursive:true});
+await copyFile('android/assetlinks.json','public/.well-known/assetlinks.json');
