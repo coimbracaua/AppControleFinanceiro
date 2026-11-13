@@ -1,9 +1,10 @@
+import {withSpreadsheet} from './build-spreadsheet.mjs';
 import {existsSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 import {buildPwa} from './build-pwa.mjs';
 import {mkdir,readFile,writeFile,copyFile} from 'node:fs/promises';
 await mkdir('public',{recursive:true});
-let html=await readFile('app.html','utf8');
+let html=await withSpreadsheet(await readFile('app.html','utf8'));
 html=html.replace('const $=s=>',"const VERCEL_APP=true; const $=s=>");
 html=html.replace('async function load(){try{',`async function showLogin(){
  const r=await fetch('/api/auth'), info=await r.json();

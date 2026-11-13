@@ -1,8 +1,9 @@
+import {withSpreadsheet} from './build-spreadsheet.mjs';
 import {mkdir,readFile,writeFile,copyFile} from 'node:fs/promises';
 await mkdir('dist/server',{recursive:true});
 await mkdir('dist/.openai',{recursive:true});
 await mkdir('dist/drizzle',{recursive:true});
-const html=await readFile('app.html','utf8');
+const html=await withSpreadsheet(await readFile('app.html','utf8'));
 const server=await readFile('worker/index.js','utf8');
 await writeFile('dist/server/index.js','const HTML='+JSON.stringify(html)+';\n'+server);
 await copyFile('.openai/hosting.json','dist/.openai/hosting.json');

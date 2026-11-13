@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "build": "node scripts/build.mjs",
-    "test": "node --test scripts/check.test.mjs scripts/vercel.test.mjs scripts/pwa.test.mjs",
+    "test": "node --test scripts/check.test.mjs scripts/vercel.test.mjs scripts/pwa.test.mjs scripts/spreadsheet.test.mjs",
     "dev": "npm run build && node scripts/dev.mjs",
     "build:vercel": "node scripts/build-vercel.mjs"
   },
@@ -12,6 +12,10 @@
     "node": "24.x"
   },
   "dependencies": {
-    "@vercel/blob": "2.9.0"
+    "@vercel/blob": "2.9.0",
+    "read-excel-file": "9.3.15"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2"
   }
 }

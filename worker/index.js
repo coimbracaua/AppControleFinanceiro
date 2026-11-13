@@ -34,5 +34,5 @@ export default {async fetch(request,env){
  }catch(e){console.error('Finance API:',e.message);return json({error:e.message?.includes('D1')?'Não foi possível acessar os dados. Tente novamente.':e.message},400);}
  }
  if(url.pathname!=='/')return new Response('Página não encontrada',{status:404});
- return new Response(HTML,{headers:{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Content-Security-Policy':"default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; object-src 'none'; base-uri 'self'"}});
+ return new Response(HTML,{headers:{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Content-Security-Policy':"default-src 'self'; worker-src 'self' blob:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; object-src 'none'; base-uri 'self'"}});
 }};
