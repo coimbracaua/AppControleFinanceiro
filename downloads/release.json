@@ -1,0 +1,11 @@
+{
+  "version": "1.0.0",
+  "file": "bolso-1.0.0.apk",
+  "package": "br.com.coimbracaua.bolso",
+  "minAndroid": "8.0",
+  "size": 3652147,
+  "sha256": "181b80bd523bae8c4df8b7023c7086e2df21c927e4e14aaa7259ae70ae7b7930",
+  "buildCommit": "6275d2b59fd8fa2d1dc420be483c09390ec85449",
+  "buildRun": "https://github.com/coimbracaua/AppControleFinanceiro/actions/runs/43322608251",
+  "installTest": "Android emulator API 30: install and launcher resolution passed"
+}

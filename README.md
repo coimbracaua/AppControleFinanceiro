@@ -131,3 +131,7 @@ Nenhuma credencial, dado financeiro real ou banco de desenvolvimento deve ser en
 ## APK Android
 
 O projeto Android está em `android/`. Ele utiliza TWA para abrir o app com ícone e identidade Android próprios. O workflow Android APK compila e testa a instalação em emulador. A versão de release é assinada fora do repositório; veja [android/README.md](android/README.md).
+
+### Instalar por APK
+
+[Baixar Bolso 1.0.0 para Android](https://appfinanceiro-rust-six.vercel.app/downloads/bolso-1.0.0.apk). Requer Android 8 ou superior e Chrome ou outro navegador compatível. Abra o arquivo baixado e autorize a instalação dessa origem se o Android solicitar. O mesmo botão aparece no diálogo de instalação do app web. Use sua senha existente.

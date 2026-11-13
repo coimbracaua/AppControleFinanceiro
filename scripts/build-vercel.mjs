@@ -1,3 +1,5 @@
+import {existsSync} from 'node:fs';
+import {createHash} from 'node:crypto';
 import {buildPwa} from './build-pwa.mjs';
 import {mkdir,readFile,writeFile,copyFile} from 'node:fs/promises';
 await mkdir('public',{recursive:true});
@@ -16,6 +18,17 @@ html=html.replace(old,'await showLogin();return');
 html=html.replace('href="/signout-with-chatgpt?return_to=/"','href="#" id="logout"');
 html=html.replace("const b=e.target.closest('button');",`if(e.target.closest('#logout')){e.preventDefault();fetch('/api/auth',{method:'DELETE'}).then(()=>location.reload());return}const b=e.target.closest('button');`);
 html=await buildPwa('public',html);
+if(existsSync('downloads/release.json')){
+ const release=JSON.parse(await readFile('downloads/release.json','utf8'));
+ if(!/^bolso-[0-9.]+\.apk$/.test(release.file))throw Error('Nome de APK inválido.');
+ const apk=await readFile('downloads/'+release.file);
+ if(createHash('sha256').update(apk).digest('hex')!==release.sha256)throw Error('O checksum do APK não corresponde ao release.');
+ await mkdir('public/downloads',{recursive:true});
+ await copyFile('downloads/'+release.file,'public/downloads/'+release.file);
+ await copyFile('downloads/'+release.file+'.sha256','public/downloads/'+release.file+'.sha256');
+ await copyFile('downloads/release.json','public/downloads/release.json');
+ html=html.replace('<div id="installInstructions"','<div id="apkDownload" style="margin-top:18px"><a href="/downloads/'+release.file+'" download style="display:inline-block;background:var(--green);color:white;padding:12px 18px;border-radius:9px;text-decoration:none;font-weight:600">Baixar APK Android</a><p style="font-size:12px;margin-top:8px">Android 8 ou superior. Abra o arquivo baixado para instalar e use sua senha do Bolso.</p></div><div id="installInstructions"');
+}
 await writeFile('public/index.html',html);
 console.log('Vercel: interface gerada em public/index.html.');
 

@@ -37,3 +37,9 @@ O arquivo final para distribuição deve ser assinado com a chave de release, ve
 Transfira o APK final assinado para o Android e abra o arquivo. O sistema pode pedir autorização de instalação para o aplicativo que abriu o APK. Autorize apenas essa origem quando solicitado; não é necessário desativar o Play Protect. Procure **Bolso** na lista de aplicativos após a instalação. Entre com a mesma senha do app web.
 
 O APK não recebe credenciais de banco de dados, não implementa interfaces JavaScript nativas e não tem acesso aos dados financeiros fora da sessão do navegador. Este pacote não é uma publicação na Play Store.
+
+## Download da versão 1.0.0
+
+APK assinado: https://appfinanceiro-rust-six.vercel.app/downloads/bolso-1.0.0.apk
+
+A compilação e o teste de instalação em emulador são verificáveis no workflow de build indicado em `downloads/release.json`. A assinatura e o certificado foram verificados com a ferramenta oficial do Android. O teste de instalação usou a variante debug do mesmo código em Android API 30; a variante release distribuída foi assinada e verificada separadamente. O aparelho físico do usuário e o fluxo completo de login/importação/exportação no Android ainda precisam de validação.

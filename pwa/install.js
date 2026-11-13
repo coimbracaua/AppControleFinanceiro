@@ -9,8 +9,8 @@
   const canonicalHost='appfinanceiro-rust-six.vercel.app';
   const alternateHost=location.hostname!==canonicalHost&&location.hostname.endsWith('.vercel.app');
   document.querySelector('#installAddress').hidden=!alternateHost;
-  const standalone=()=>matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
-  const sync=()=>{const installed=standalone();button.hidden=false;button.textContent=installed?'✓ Aplicativo instalado':'↓ Instalar o Bolso';nativeButton.hidden=installed||!promptEvent||alternateHost;instructions.hidden=installed;document.querySelector('#installSummary').textContent=installed?'O Bolso já está instalado neste dispositivo.':'Adicione o Bolso à sua tela inicial para abrir como um aplicativo.'};
+  const standalone=()=>matchMedia('(display-mode: standalone)').matches||navigator.standalone===true||new URLSearchParams(location.search).get('source')==='android-apk'||document.referrer.startsWith('android-app://br.com.coimbracaua.bolso');
+  const sync=()=>{const installed=standalone();const apkDownload=document.querySelector('#apkDownload');if(apkDownload)apkDownload.hidden=installed;button.hidden=false;button.textContent=installed?'✓ Aplicativo instalado':'↓ Instalar o Bolso';nativeButton.hidden=installed||!promptEvent||alternateHost;instructions.hidden=installed;document.querySelector('#installSummary').textContent=installed?'O Bolso já está instalado neste dispositivo.':'Adicione o Bolso à sua tela inicial para abrir como um aplicativo.'};
   const ios=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
   const android=/Android/.test(navigator.userAgent);
   instructions.innerHTML=ios
